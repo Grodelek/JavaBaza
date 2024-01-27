@@ -1,0 +1,93 @@
+import java.io.File;
+import java.io.IOException;
+import java.util.Scanner;
+public class Baza2024 {
+    public static void main(String[] args){
+    drukujMenu();
+    wybierzOpcje();
+    }
+    static void drukujMenu(){ //Metoda drukuj menu
+        System.out.println("           MENU");
+        System.out.println("===========================");
+        System.out.println("1.Otworz baze danych");
+        System.out.println("2.Utworz nowa baze");
+        System.out.println("3.Sortowanie bazy");
+        System.out.println("4.Usun baze");
+        System.out.println("5.Zakoncz program");
+        System.out.println("============================");
+    }
+    static void wybierzOpcje(){
+        Scanner sc = new Scanner(System.in);
+        boolean wybor = false;
+        int input;
+        int opcja=0;
+        do{
+            System.out.println("Wybierz opcje:");
+            input = sc.nextInt();
+            if(input<1 ||input >5){
+                wybor=true;
+                System.out.println("Niepoprawna opcja");
+            }
+        }while(wybor);
+        switch(opcja){
+            case 1:
+                System.out.println("Wybrano opcje 1");
+                //otworzBaze();
+                break;
+            case 2:
+                System.out.println("Wybrano opcje 2");
+                //utworzBaze();
+                break;
+            case 3:
+                System.out.println("Wybrano opcje 3");
+                //sortowanie();
+                break;
+            case 4:
+                System.out.println("Wybrano opcje 4");
+                //usunBaze();
+                break;
+            case 5:
+                System.out.println("Wybrano opcje 5");
+                //zapiszBaze(nazwaOtwartegoPliku);
+                System.exit(0);
+        } //switch
+    } //while
+    static void otworzBaze() throws java.io.IOException
+    {
+        String nazwaBazy = new String();
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Podaj nazwe bazy:");
+        nazwaBazy = sc.next();
+        System.out.println("Nazwa bazy "+nazwaBazy);
+        System.in.read();
+    }
+    static void utworzBaze() throws java.io.IOException
+    {
+        Scanner sc = new Scanner(System.in);
+        String nazwaBazy = new String();
+        boolean poprawna = false;
+        boolean w1=true;
+        do{
+            System.out.println("Podaj nazwe bazy w formacie bazaXX.dat, gdzie cyfry XX z [0,9]:");
+            nazwaBazy=sc.next();
+            poprawna = false;
+            w1  = true;
+            poprawna=sprawdzPoprawnoscNazwyBazy(nazwaBazy);
+           File file = new File(nazwaBazy);
+           w1=file.exists()||file.isDirectory()||!poprawna;
+           if(w1)
+               System.out.println("Nazwa bazy niepoprawna lub plik istnieje");
+            System.in.read();
+        }while(w1);
+    }
+    static void przegladBazy()
+    {
+        System.out.println("Metoda przeglad Bazy");
+        try {
+            System.in.read();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}//menu
+
