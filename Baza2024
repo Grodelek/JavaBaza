@@ -1,5 +1,4 @@
 import org.w3c.dom.ls.LSOutput;
-
 import java.io.*;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -9,9 +8,7 @@ public class Baza2024 {
     public static void main(String[] args) throws IOException {
         drukujMenu();
         wybierzOpcje();
-
-
-
+        
     }
     static void drukujMenu(){ //Metoda drukuj menu
         System.out.println("           MENU");
