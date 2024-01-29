@@ -10,8 +10,6 @@ public class Baza2024 {
         drukujMenu();
         wybierzOpcje();
 
-
-
     }
     static void drukujMenu(){ //Metoda drukuj menu
         System.out.println("           MENU");
@@ -55,14 +53,15 @@ public class Baza2024 {
                 break;
             case 4:
                 System.out.println("Wybrano opcje 4");
-                //usunBaze();
+                usunBaze();
+
                 break;
             case 5:
                 System.out.println("Wybrano opcje 5");
                 //zapiszBaze(nazwaOtwartegoPliku);
                 System.exit(0);
-        } 
-    } 
+        } //switch
+    } //while
     static void otworzBaze() throws java.io.IOException
     {
         String nazwaBazy = new String();
@@ -89,8 +88,10 @@ public class Baza2024 {
                 System.out.println("Nazwa bazy niepoprawna lub plik istnieje");
         }while(w1);
         stworzPlik(nazwaBazy);
-
+        drukujMenu();
+        wybierzOpcje();
     }
+
     static void stworzPlik(String nazwaBazy) throws java.io.IOException
     {
         Scanner sc = new Scanner(System.in);
@@ -106,7 +107,7 @@ public class Baza2024 {
             writer.close();
             System.out.println("Dane zostaly zapisane do pliku.");
         }catch(IOException e ){
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -130,17 +131,29 @@ public class Baza2024 {
     static void sortowanie() throws java.io.IOException
     {
         System.out.println("Sortowanie");
-        System.in.read();
     }
     static void usunBaze() throws java.io.IOException
     {
-        System.out.println("Metoda usunBaze");
-        System.in.read();
+        String nazwaBazy;
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Ktora baze chcesz usunac?");
+        nazwaBazy = sc.next();
+        try {
+            File fileDelete = new File(nazwaBazy);
+            if(fileDelete.delete()){
+                System.out.println("Plik zostal usuniety prawidlowo.");
+            }else{
+                System.out.println("Nie udalo sie usunac pliku.");
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        drukujMenu();
+        wybierzOpcje();
     }
     static void zapiszBaze(String nazwaOtwartegoPliku) throws java.io.IOException
     {
         System.out.println("Metoda ZapiszBaze");
-        System.in.read();
     }
 }//menu
 
