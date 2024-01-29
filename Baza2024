@@ -1,10 +1,13 @@
 import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class Baza2024 {
     public static void main(String[] args) throws IOException {
-    drukujMenu();
-    wybierzOpcje();
+        drukujMenu();
+        wybierzOpcje();
 
 
 
@@ -39,7 +42,7 @@ public class Baza2024 {
         switch(opcja){
             case 1:
                 System.out.println("Wybrano opcje 1");
-                //otworzBaze();
+                otworzBaze();
                 break;
             case 2:
                 System.out.println("Wybrano opcje 2");
@@ -80,29 +83,23 @@ public class Baza2024 {
             poprawna = false;
             w1  = true;
             poprawna=sprawdzPoprawnoscNazwyBazy(nazwaBazy);
-           File file = new File(nazwaBazy);
-           w1=file.exists()||file.isDirectory()||!poprawna;
-           if(w1)
-               System.out.println("Nazwa bazy niepoprawna lub plik istnieje");
-            System.in.read();
+            File file = new File(nazwaBazy);
+            w1=file.exists()||file.isDirectory()||!poprawna;
+            if(w1)
+                System.out.println("Nazwa bazy niepoprawna lub plik istnieje");
         }while(w1);
+
     }
 
     private static boolean sprawdzPoprawnoscNazwyBazy(String nazwaBazy) {
-        Scanner sc = new Scanner(System.in);
-        boolean poprawnosc=false;
-        if(nazwaBazy.contains("baza") && (nazwaBazy.length() == 4)){
-            System.out.println("Prawidlowa nazwa");
-            poprawnosc=true;
-        }else{
-            while(!poprawnosc){
-            System.out.println("Blad, podaj nazwe ponownie");
-            nazwaBazy = sc.next();}
-        }
-        return poprawnosc;
+        Pattern wzorzec = Pattern.compile("^baza\\d{1,2}\\.dat$");
+
+        Matcher matcher = wzorzec.matcher(nazwaBazy);
+        return matcher.matches();
     }
 
-    static void przegladBazy()
+
+    static void przegladBazy() throws java.io.IOException
     {
         System.out.println("Metoda przeglad Bazy");
         try {
@@ -111,5 +108,52 @@ public class Baza2024 {
             throw new RuntimeException(e);
         }
     }
+    static void sortowanie() throws java.io.IOException
+    {
+        System.out.println("Sortowanie");
+        System.in.read();
+    }
+    static void usunBaze() throws java.io.IOException
+    {
+        System.out.println("Metoda usunBaze");
+        System.in.read();
+    }
+    static void zapiszBaze(String nazwaOtwartegoPliku) throws java.io.IOException
+    {
+        System.out.println("Metoda ZapiszBaze");
+        System.in.read();
+    }
 }//menu
 
+class Student{
+    private String nazwisko;
+    private String imie;
+    private int rokStudiow;
+    Student(){};
+    Student(String nazwisko,String imie, int rokStudiow)
+    {
+    this.nazwisko = nazwisko;
+    this.imie = imie;
+    this.rokStudiow = rokStudiow;
+    }
+    void wczytajDane()
+    {
+    Scanner sc = new Scanner(System.in);
+    System.out.println("Podaj nazwisko");
+    nazwisko = sc.next();
+    imie=sc.next();
+    System.out.println("Podaj rok studiow:");
+    rokStudiow = sc.nextInt();
+    while(!sc.hasNextInt()){
+        System.out.println("Blad, podaj ponownie rok studiow:");
+        sc.next();
+    }
+    rokStudiow = sc.nextInt();
+    }
+    void drukujDane(){
+        System.out.println("Nazwisko: "+nazwisko);
+        System.out.println("Imie: "+imie);
+        System.out.println("Rok studiow:"+rokStudiow);
+    }
+
+}
