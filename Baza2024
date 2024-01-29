@@ -1,4 +1,5 @@
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -69,7 +70,6 @@ public class Baza2024 {
         System.out.println("Podaj nazwe bazy:");
         nazwaBazy = sc.next();
         System.out.println("Nazwa bazy "+nazwaBazy);
-        System.in.read();
     }
     static void utworzBaze() throws java.io.IOException
     {
@@ -88,7 +88,26 @@ public class Baza2024 {
             if(w1)
                 System.out.println("Nazwa bazy niepoprawna lub plik istnieje");
         }while(w1);
+        stworzPlik(nazwaBazy);
 
+    }
+    static void stworzPlik(String nazwaBazy) throws java.io.IOException
+    {
+        Scanner sc = new Scanner(System.in);
+        try {
+            FileWriter writer = new FileWriter(nazwaBazy,false);
+            Student student = new Student();
+            student.wczytajDane();
+            writer.write("Imie studenta: "+student.getImie());
+            writer.write("\n");
+            writer.write("Nazwisko studenta: "+student.getNazwisko());
+            writer.write("\n");
+            writer.write("Rok studiow "+student.getRokStudiow());
+            writer.close();
+            System.out.println("Dane zostaly zapisane do pliku.");
+        }catch(IOException e ){
+            System.out.println(e.getMessage());
+        }
     }
 
     private static boolean sprawdzPoprawnoscNazwyBazy(String nazwaBazy) {
@@ -132,23 +151,31 @@ class Student{
     Student(){};
     Student(String nazwisko,String imie, int rokStudiow)
     {
-    this.nazwisko = nazwisko;
-    this.imie = imie;
-    this.rokStudiow = rokStudiow;
+        this.nazwisko = nazwisko;
+        this.imie = imie;
+        this.rokStudiow = rokStudiow;
     }
     void wczytajDane()
     {
-    Scanner sc = new Scanner(System.in);
-    System.out.println("Podaj nazwisko");
-    nazwisko = sc.next();
-    imie=sc.next();
-    System.out.println("Podaj rok studiow:");
-    rokStudiow = sc.nextInt();
-    while(!sc.hasNextInt()){
-        System.out.println("Blad, podaj ponownie rok studiow:");
-        sc.next();
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Podaj imie studenta:");
+        imie=sc.next();
+        System.out.println("Podaj nazwisko");
+        nazwisko = sc.next();
+        System.out.println("Podaj rok studiow:");
+        while(!sc.hasNextInt()){
+            System.out.println("Blad, podaj ponownie rok studiow:");
+            sc.next();
+        }rokStudiow = sc.nextInt();
     }
-    rokStudiow = sc.nextInt();
+    String getImie(){
+        return imie;
+    }
+    String getNazwisko(){
+        return nazwisko;
+    }
+    int getRokStudiow(){
+        return rokStudiow;
     }
     void drukujDane(){
         System.out.println("Nazwisko: "+nazwisko);
