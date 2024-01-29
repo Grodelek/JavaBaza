@@ -61,8 +61,8 @@ public class Baza2024 {
                 System.out.println("Wybrano opcje 5");
                 //zapiszBaze(nazwaOtwartegoPliku);
                 System.exit(0);
-        } //switch
-    } //while
+        } 
+    } 
     static void otworzBaze() throws java.io.IOException
     {
         String nazwaBazy = new String();
