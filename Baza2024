@@ -1,4 +1,4 @@
-import org.w3c.dom.ls.LSOutput;
+import java.awt.*;
 import java.io.*;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -7,8 +7,9 @@ import java.util.regex.Pattern;
 public class Baza2024 {
     public static void main(String[] args) throws IOException {
         drukujMenu();
+       centerCursorOn();
         wybierzOpcje();
-        
+
     }
     static void drukujMenu(){ //Metoda drukuj menu
         System.out.println("           MENU");
@@ -59,8 +60,8 @@ public class Baza2024 {
                 System.out.println("Wybrano opcje 5");
                 //zapiszBaze(nazwaOtwartegoPliku);
                 System.exit(0);
-        } //switch
-    } //while
+        }
+    }
     static void otworzBaze() throws java.io.IOException
     {
         String nazwaBazy = new String();
@@ -90,6 +91,7 @@ public class Baza2024 {
             try (BufferedWriter buffwriter = new BufferedWriter(new FileWriter(nazwaBazy, true))) {
                 buffwriter.newLine();
                 student.wczytajDane();
+                buffwriter.write("\n");
                 buffwriter.write("Imie: " + student.getImie());
                 buffwriter.write("\n");
                 buffwriter.write("Nazwisko: " + student.getNazwisko());
@@ -152,13 +154,6 @@ public class Baza2024 {
             e.printStackTrace();
         }
     }
-
-    private static boolean sprawdzPoprawnoscNazwyBazy(String nazwaBazy) {
-        Pattern wzorzec = Pattern.compile("^baza\\d{1,2}\\.dat$");
-
-        Matcher matcher = wzorzec.matcher(nazwaBazy);
-        return matcher.matches();
-    }
     static void przegladBazy() throws java.io.IOException
     {
         System.out.println("Metoda przeglad Bazy");
@@ -194,6 +189,28 @@ public class Baza2024 {
         drukujMenu();
         wybierzOpcje();
     }
+    static void centerCursor(Robot robot){
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int centerX = screenSize.width/2;
+        int centerY = screenSize.height/2;
+        robot.mouseMove(centerX,centerY);
+    }
+    static void centerCursorOn(){
+        EventQueue.invokeLater(()->{
+            try{
+                Robot robot = new Robot();
+                centerCursor(robot);
+            }catch(AWTException e){
+                e.printStackTrace();
+            }
+        });
+    }
+    private static boolean sprawdzPoprawnoscNazwyBazy(String nazwaBazy) {
+        Pattern wzorzec = Pattern.compile("^baza\\d{1,2}\\.dat$");
+
+        Matcher matcher = wzorzec.matcher(nazwaBazy);
+        return matcher.matches();
+    }
 }
 class Student{
     private String nazwisko;
@@ -228,4 +245,5 @@ class Student{
     int getRokStudiow(){
         return rokStudiow;
     }
+}
 }
