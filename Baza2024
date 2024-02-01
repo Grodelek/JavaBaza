@@ -7,11 +7,12 @@ import java.util.regex.Pattern;
 public class Baza2024 {
     public static void main(String[] args) throws IOException {
         drukujMenu();
-       centerCursorOn();
+        centerCursorOn();
         wybierzOpcje();
 
     }
-    static void drukujMenu(){ //Metoda drukuj menu
+
+    static void drukujMenu() { //Metoda drukuj menu
         System.out.println("           MENU");
         System.out.println("+=============================+");
         System.out.println("1.Otworz baze danych");
@@ -21,24 +22,24 @@ public class Baza2024 {
         System.out.println("5.Zakoncz program");
         System.out.println("+=============================+");
     }
+
     static void wybierzOpcje() throws IOException {
         Scanner sc = new Scanner(System.in);
         boolean wybor = false;
         int input;
-        int opcja=0;
-        do{
+        int opcja = 0;
+        do {
             System.out.println("Wybierz opcje:");
             input = sc.nextInt();
-            if(input<1 ||input >5){
-                wybor=true;
+            if (input < 1 || input > 5) {
+                wybor = true;
                 System.out.println("Niepoprawna opcja");
-            }
-            else{
-                wybor= false;
+            } else {
+                wybor = false;
                 opcja = input;
             }
-        }while(wybor);
-        switch(opcja){
+        } while (wybor);
+        switch (opcja) {
             case 1:
                 System.out.println("Wybrano opcje 1");
                 otworzBaze();
@@ -62,12 +63,26 @@ public class Baza2024 {
                 System.exit(0);
         }
     }
-    static void otworzBaze() throws java.io.IOException
-    {
-        String nazwaBazy = new String();
+
+    static void otworzBaze() throws java.io.IOException {
         Scanner sc = new Scanner(System.in);
-        System.out.println("Podaj nazwe bazy:");
-        nazwaBazy = sc.next();
+        String nazwaBazy = new String();
+
+        System.out.println("Podaj nazwe bazy lub wroc do menu wpisujac litere G:");
+        nazwaBazy = sc.nextLine();
+        File file = new File(nazwaBazy);
+
+        if (!file.exists()) {
+            System.out.println("Plik nie istnieje");
+            drukujMenu();
+            wybierzOpcje();
+
+        }
+        if (nazwaBazy.equalsIgnoreCase("G")) {
+            drukujMenu();
+            wybierzOpcje();
+            return;
+        }
         System.out.println("Otwarto plik: "+nazwaBazy);
         System.out.println("+=============================+");
         try{
@@ -85,7 +100,7 @@ public class Baza2024 {
         String choice;
 
         System.out.println("Czy chcesz dodac dane do pliku? Tak/Nie");
-        choice = sc.next();
+        choice = sc.nextLine();
         while(choice.equals("Tak") || choice.equals("tak")){
             Student student = new Student();
             try (BufferedWriter buffwriter = new BufferedWriter(new FileWriter(nazwaBazy, true))) {
@@ -112,7 +127,7 @@ public class Baza2024 {
         System.in.read();
         drukujMenu();
         wybierzOpcje();
-        }
+    }
     }
     static void utworzBaze() throws java.io.IOException
     {
@@ -246,4 +261,5 @@ class Student{
         return rokStudiow;
     }
 }
+
 }
