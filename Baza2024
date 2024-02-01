@@ -1,18 +1,24 @@
 import java.awt.*;
 import java.io.*;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Baza2024 {
+    private static Student[] student;
     public static void main(String[] args) throws IOException {
+        student = new Student[4];
+        for (int i = 0; i < student.length; i++) {
+            student[i] = new Student();
+        }
         drukujMenu();
         centerCursorOn();
         wybierzOpcje();
 
     }
-
-    static void drukujMenu() { //Metoda drukuj menu
+    static void drukujMenu() {
         System.out.println("           MENU");
         System.out.println("+=============================+");
         System.out.println("1.Otworz baze danych");
@@ -28,6 +34,7 @@ public class Baza2024 {
         boolean wybor = false;
         int input;
         int opcja = 0;
+        int wyborSort = 0;
         do {
             System.out.println("Wybierz opcje:");
             input = sc.nextInt();
@@ -37,6 +44,13 @@ public class Baza2024 {
             } else {
                 wybor = false;
                 opcja = input;
+            }
+            if(opcja == 3){
+                System.out.println("Wybierz pole po ktorym chcesz posortowac:");
+                System.out.println("1. Imie");
+                System.out.println("2. Nazwisko");
+                System.out.println("3. Rok studiow");
+                wyborSort = sc.nextInt();
             }
         } while (wybor);
         switch (opcja) {
@@ -50,7 +64,7 @@ public class Baza2024 {
                 break;
             case 3:
                 System.out.println("Wybrano opcje 3");
-                //sortowanie();
+                sortujBaze(student,wyborSort);
                 break;
             case 4:
                 System.out.println("Wybrano opcje 4");
@@ -63,7 +77,6 @@ public class Baza2024 {
                 System.exit(0);
         }
     }
-
     static void otworzBaze() throws java.io.IOException {
         Scanner sc = new Scanner(System.in);
         String nazwaBazy = new String();
@@ -85,16 +98,16 @@ public class Baza2024 {
         }
         System.out.println("Otwarto plik: "+nazwaBazy);
         System.out.println("+=============================+");
-        try{
+        try {
             String line;
             FileReader fileReader = new FileReader(nazwaBazy);
             BufferedReader buffedReader = new BufferedReader(fileReader);
-            while((line = buffedReader.readLine()) != null){
+            while ((line = buffedReader.readLine()) != null) {
                 System.out.println(line);
             }
             buffedReader.close();
             fileReader.close();
-        }catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
         String choice;
@@ -102,18 +115,19 @@ public class Baza2024 {
         System.out.println("Czy chcesz dodac dane do pliku? Tak/Nie");
         choice = sc.nextLine();
         while(choice.equals("Tak") || choice.equals("tak")){
-            Student student = new Student();
             try (BufferedWriter buffwriter = new BufferedWriter(new FileWriter(nazwaBazy, true))) {
                 buffwriter.newLine();
-                student.wczytajDane();
-                buffwriter.write("\n");
-                buffwriter.write("Imie: " + student.getImie());
-                buffwriter.write("\n");
-                buffwriter.write("Nazwisko: " + student.getNazwisko());
-                buffwriter.write("\n");
-                buffwriter.write("Rok studiow: " + student.getRokStudiow());
-                buffwriter.write("\n");
-                System.out.println("Dane zostaly dopisane do pliku.");
+                for(int i=0;i< student.length;i++) {
+                    student[i].wczytajDane();
+                    buffwriter.write("\n");
+                    buffwriter.write("Imie: " + student[i].getImie());
+                    buffwriter.write("\n");
+                    buffwriter.write("Nazwisko: " + student[i].getNazwisko());
+                    buffwriter.write("\n");
+                    buffwriter.write("Rok studiow: " + student[i].getRokStudiow());
+                    buffwriter.write("\n");
+                    System.out.println("Dane zostaly dopisane do pliku.");
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -122,12 +136,44 @@ public class Baza2024 {
             drukujMenu();
             wybierzOpcje();
         }if(choice.equals("Nie") || choice.equals("nie")){
-        System.out.println("+=============================+");
-        System.out.println("Kliknij enter aby kontynuuowac");
-        System.in.read();
-        drukujMenu();
-        wybierzOpcje();
+            System.out.println("+=============================+");
+            System.out.println("Kliknij enter aby kontynuuowac");
+            System.in.read();
+            drukujMenu();
+            wybierzOpcje();
+        }
     }
+    static void sortujBaze(Student[] student, int wyborSort) throws IOException {
+        Scanner sc = new Scanner(System.in);
+        String nazwaBazy;
+        System.out.println("Podaj nazwe bazy ktora chcesz posortowac");
+        nazwaBazy = sc.next();
+
+      File file = new File(nazwaBazy);
+        if (!file.exists()) {
+            System.out.println("Plik nie istnieje");
+            drukujMenu();
+            wybierzOpcje();
+
+        }
+        switch (wyborSort) {
+            case 1:
+                Arrays.sort(student, Comparator.comparing(Student::getImie));
+                break;
+            case 2:
+                Arrays.sort(student, Comparator.comparing(Student::getNazwisko));
+                break;
+            case 3:
+                Arrays.sort(student, Comparator.comparingInt(Student::getRokStudiow));
+                break;
+            default:
+                System.out.println("Niepoprawny wybor sortowania");
+
+        }
+        for (Student s : student) {
+            System.out.println("Imie: " + s.getImie() + ", Nazwisko: " + s.getNazwisko() + ", Rok studiow: " + s.getRokStudiow());
+        }
+        otworzBaze();
     }
     static void utworzBaze() throws java.io.IOException
     {
@@ -146,6 +192,7 @@ public class Baza2024 {
             if(w1)
                 System.out.println("Nazwa bazy niepoprawna lub plik istnieje");
         }while(w1);
+        Student nowyStudent = new Student();
         stworzPlik(nazwaBazy);
         drukujMenu();
         wybierzOpcje();
@@ -154,33 +201,31 @@ public class Baza2024 {
     static void stworzPlik(String nazwaBazy) throws java.io.IOException
     {
         Scanner sc = new Scanner(System.in);
+        FileWriter writer = new FileWriter(nazwaBazy,true);
+
         try {
-            FileWriter writer = new FileWriter(nazwaBazy,true);
-            Student student = new Student();
-            student.wczytajDane();
-            writer.write("Imie studenta: "+student.getImie());
-            writer.write("\n");
-            writer.write("Nazwisko studenta: "+student.getNazwisko());
-            writer.write("\n");
-            writer.write("Rok studiow "+student.getRokStudiow());
-            writer.close();
-            System.out.println("Dane zostaly zapisane do pliku.");
+            for(int i=0;i<student.length;i++) {
+                student[i] = new Student();
+                student[i].wczytajDane();
+                writer.write("Imie studenta: " + student[i].getImie());
+                writer.write("\n");
+                writer.write("Nazwisko studenta: " + student[i].getNazwisko());
+                writer.write("\n");
+                writer.write("Rok studiow " + student[i].getRokStudiow());
+                writer.write("\n");
+                writer.write("\n");
+
+            }
         }catch(IOException e ){
             e.printStackTrace();
         }
-    }
-    static void przegladBazy() throws java.io.IOException
-    {
-        System.out.println("Metoda przeglad Bazy");
-        try {
-            System.in.read();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        finally{
+            if(writer != null) {
+                writer.close();
+                System.out.println("Dane zostaly zapisane do pliku.");
+
+            }
         }
-    }
-    static void sortowanie() throws java.io.IOException
-    {
-        System.out.println("Sortowanie");
     }
     static void usunBaze() throws java.io.IOException
     {
@@ -231,6 +276,7 @@ class Student{
     private String nazwisko;
     private String imie;
     private int rokStudiow;
+    private int wyborSort;
     Student(){};
     Student(String nazwisko,String imie, int rokStudiow)
     {
@@ -260,6 +306,4 @@ class Student{
     int getRokStudiow(){
         return rokStudiow;
     }
-}
-
 }
