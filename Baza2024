@@ -149,7 +149,7 @@ public class Baza2024 {
         System.out.println("Podaj nazwe bazy ktora chcesz posortowac");
         nazwaBazy = sc.next();
 
-      File file = new File(nazwaBazy);
+        File file = new File(nazwaBazy);
         if (!file.exists()) {
             System.out.println("Plik nie istnieje");
             drukujMenu();
@@ -266,7 +266,7 @@ public class Baza2024 {
         });
     }
     private static boolean sprawdzPoprawnoscNazwyBazy(String nazwaBazy) {
-        Pattern wzorzec = Pattern.compile("^baza\\d{1,2}\\.dat$");
+        Pattern wzorzec = Pattern.compile("^baza\\d{2}\\.dat$");
 
         Matcher matcher = wzorzec.matcher(nazwaBazy);
         return matcher.matches();
