@@ -7,11 +7,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Baza2024 {
-    private static Student[] student;
+    private static Smartfon[] smartfon;
     public static void main(String[] args) throws IOException {
-        student = new Student[4];
-        for (int i = 0; i < student.length; i++) {
-            student[i] = new Student();
+        smartfon = new Smartfon[4];
+        for (int i = 0; i < smartfon.length; i++) {
+            smartfon[i] = new Smartfon();
         }
         drukujMenu();
         centerCursorOn();
@@ -47,16 +47,16 @@ public class Baza2024 {
             }
             if(opcja == 3){
                 System.out.println("Wybierz pole po ktorym chcesz posortowac:");
-                System.out.println("1. Imie");
-                System.out.println("2. Nazwisko");
-                System.out.println("3. Rok studiow");
+                System.out.println("1. Firma:");
+                System.out.println("2. Modelu");
+                System.out.println("3. Rok premiery");
                 wyborSort = sc.nextInt();
             }
         } while (wybor);
         switch (opcja) {
             case 1:
                 System.out.println("Wybrano opcje 1");
-                otworzBaze();
+                otworzBaze(smartfon);
                 break;
             case 2:
                 System.out.println("Wybrano opcje 2");
@@ -64,23 +64,23 @@ public class Baza2024 {
                 break;
             case 3:
                 System.out.println("Wybrano opcje 3");
-                sortujBaze(student,wyborSort);
+                sortujBaze(smartfon,wyborSort);
                 break;
             case 4:
                 System.out.println("Wybrano opcje 4");
                 usunBaze();
-
                 break;
             case 5:
                 System.out.println("Wybrano opcje 5");
-                //zapiszBaze(nazwaOtwartegoPliku);
                 System.exit(0);
         }
     }
-    static void otworzBaze() throws java.io.IOException {
+    static void otworzBaze(Smartfon[] smartfon) throws java.io.IOException {
         Scanner sc = new Scanner(System.in);
-        String nazwaBazy = new String();
-
+        String nazwaBazy;
+        System.out.println("+=============================+");
+        System.out.println("              Przeglad");
+        System.out.println("+=============================+");
         System.out.println("Podaj nazwe bazy lub wroc do menu wpisujac litere G:");
         nazwaBazy = sc.nextLine();
         File file = new File(nazwaBazy);
@@ -97,7 +97,6 @@ public class Baza2024 {
             return;
         }
         System.out.println("Otwarto plik: "+nazwaBazy);
-        System.out.println("+=============================+");
         try {
             String line;
             FileReader fileReader = new FileReader(nazwaBazy);
@@ -110,40 +109,51 @@ public class Baza2024 {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        String choice;
+        System.out.println("+=============================+");
+        System.out.println("M - Modyfikacja H-Powrot do menu");
+        char choice = sc.next().charAt(0);
+        switch(choice) {
+            case 'M':
+                try (BufferedWriter buffwriter = new BufferedWriter(new FileWriter(nazwaBazy, false))) {
+                    buffwriter.newLine();
+                    System.out.println("Podaj numer ktore pole chcesz zmienic: (0-3)");
+                    int numR = sc.nextInt();
+                    if (numR >= 0 && numR <= 3) {
+                        Smartfon modifiedSmartfon = new Smartfon();
+                        modifiedSmartfon.wczytajDane();
+                        smartfon[numR] = modifiedSmartfon;
+                        for (Smartfon s : smartfon) {
+                            buffwriter.write("Firma: " + s.getFirma() + "\n");
+                            buffwriter.write("Nazwa modelu: " + s.getNazwaModelu() + "\n");
+                            buffwriter.write("Rok premiery: " + s.getRokPremiery() + "\n");
+                            buffwriter.newLine();
+                        }
+                    } else{
+                        System.out.println("Niepoprawny numer pola");
+                        break;
+                    }
 
-        System.out.println("Czy chcesz dodac dane do pliku? Tak/Nie");
-        choice = sc.nextLine();
-        while(choice.equals("Tak") || choice.equals("tak")){
-            try (BufferedWriter buffwriter = new BufferedWriter(new FileWriter(nazwaBazy, true))) {
-                buffwriter.newLine();
-                for(int i=0;i< student.length;i++) {
-                    student[i].wczytajDane();
-                    buffwriter.write("\n");
-                    buffwriter.write("Imie: " + student[i].getImie());
-                    buffwriter.write("\n");
-                    buffwriter.write("Nazwisko: " + student[i].getNazwisko());
-                    buffwriter.write("\n");
-                    buffwriter.write("Rok studiow: " + student[i].getRokStudiow());
-                    buffwriter.write("\n");
-                    System.out.println("Dane zostaly dopisane do pliku.");
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            System.out.println("Kliknij enter aby kontynuuowac");
-            System.in.read();
-            drukujMenu();
-            wybierzOpcje();
-        }if(choice.equals("Nie") || choice.equals("nie")){
-            System.out.println("+=============================+");
-            System.out.println("Kliknij enter aby kontynuuowac");
-            System.in.read();
-            drukujMenu();
-            wybierzOpcje();
+                break;
+
+            case 'S':
+                System.out.println("Sortowanie");
+                break;
+            case 'H':
+                drukujMenu();
+                wybierzOpcje();
+
         }
+        System.out.println("Dane zostaly zmodyfikowane");
+        System.out.println("Kliknij enter aby kontynuuowac");
+        System.in.read();
+        drukujMenu();
+        wybierzOpcje();
+
     }
-    static void sortujBaze(Student[] student, int wyborSort) throws IOException {
+    static void sortujBaze(Smartfon[] smartfon, int wyborSort) throws IOException {
         Scanner sc = new Scanner(System.in);
         String nazwaBazy;
         System.out.println("Podaj nazwe bazy ktora chcesz posortowac");
@@ -158,22 +168,22 @@ public class Baza2024 {
         }
         switch (wyborSort) {
             case 1:
-                Arrays.sort(student, Comparator.comparing(Student::getImie));
+                Arrays.sort(smartfon, Comparator.comparing(Smartfon::getFirma));
                 break;
             case 2:
-                Arrays.sort(student, Comparator.comparing(Student::getNazwisko));
+                Arrays.sort(smartfon, Comparator.comparing(Smartfon::getNazwaModelu));
                 break;
             case 3:
-                Arrays.sort(student, Comparator.comparingInt(Student::getRokStudiow));
+                Arrays.sort(smartfon, Comparator.comparingInt(Smartfon::getRokPremiery));
                 break;
             default:
                 System.out.println("Niepoprawny wybor sortowania");
 
         }
-        for (Student s : student) {
-            System.out.println("Imie: " + s.getImie() + ", Nazwisko: " + s.getNazwisko() + ", Rok studiow: " + s.getRokStudiow());
+        for (Smartfon s : smartfon) {
+            System.out.println("Firma: " + s.getFirma() + ", Nazwa modelu: " + s.getNazwaModelu()+ ", Rok premiery: " + s.getRokPremiery());
         }
-        otworzBaze();
+        otworzBaze(smartfon);
     }
     static void utworzBaze() throws java.io.IOException
     {
@@ -192,7 +202,7 @@ public class Baza2024 {
             if(w1)
                 System.out.println("Nazwa bazy niepoprawna lub plik istnieje");
         }while(w1);
-        Student nowyStudent = new Student();
+        Smartfon nowysmartfon = new Smartfon();
         stworzPlik(nazwaBazy);
         drukujMenu();
         wybierzOpcje();
@@ -204,14 +214,14 @@ public class Baza2024 {
         FileWriter writer = new FileWriter(nazwaBazy,true);
 
         try {
-            for(int i=0;i<student.length;i++) {
-                student[i] = new Student();
-                student[i].wczytajDane();
-                writer.write("Imie studenta: " + student[i].getImie());
+            for(int i=0;i<smartfon.length;i++) {
+                smartfon[i] = new Smartfon();
+                smartfon[i].wczytajDane();
+                writer.write("Nazwa firmy: " + smartfon[i].getFirma());
                 writer.write("\n");
-                writer.write("Nazwisko studenta: " + student[i].getNazwisko());
+                writer.write("Nazwa modelu: " + smartfon[i].getNazwaModelu());
                 writer.write("\n");
-                writer.write("Rok studiow " + student[i].getRokStudiow());
+                writer.write("Rok Premiery " + smartfon[i].getRokPremiery());
                 writer.write("\n");
                 writer.write("\n");
 
@@ -272,38 +282,38 @@ public class Baza2024 {
         return matcher.matches();
     }
 }
-class Student{
-    private String nazwisko;
-    private String imie;
-    private int rokStudiow;
+class Smartfon{
+    private String nazwaModelu;
+    private String firma;
+    private int rokPremiery;
     private int wyborSort;
-    Student(){};
-    Student(String nazwisko,String imie, int rokStudiow)
+    Smartfon(){};
+    Smartfon(String nazwaModelu,String firma, int rokPremiery)
     {
-        this.nazwisko = nazwisko;
-        this.imie = imie;
-        this.rokStudiow = rokStudiow;
+        this.nazwaModelu = nazwaModelu;
+        this.firma = firma;
+        this.rokPremiery = rokPremiery;
     }
     void wczytajDane()
     {
         Scanner sc = new Scanner(System.in);
-        System.out.println("Podaj imie studenta:");
-        imie=sc.next();
-        System.out.println("Podaj nazwisko");
-        nazwisko = sc.next();
-        System.out.println("Podaj rok studiow:");
+        System.out.println("Podaj nazwe firmy");
+        this.firma =sc.nextLine();
+        System.out.println("Podaj model");
+        this.nazwaModelu = sc.nextLine();
+        System.out.println("Podaj rok Premiery:");
         while(!sc.hasNextInt()){
-            System.out.println("Blad, podaj ponownie rok studiow:");
+            System.out.println("Blad, podaj ponownie rok premiery:");
             sc.next();
-        }rokStudiow = sc.nextInt();
+        }this.rokPremiery = sc.nextInt();
     }
-    String getImie(){
-        return imie;
+    String getFirma(){
+        return firma;
     }
-    String getNazwisko(){
-        return nazwisko;
+    String getNazwaModelu(){
+        return nazwaModelu;
     }
-    int getRokStudiow(){
-        return rokStudiow;
+    int getRokPremiery(){
+        return rokPremiery;
     }
 }
