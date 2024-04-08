@@ -5,7 +5,7 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Database2024 {
+public class ConsoleDatabase{
     private static Student[] students;
     public static void main(String[] args) throws IOException {
         students = new Student[4];
