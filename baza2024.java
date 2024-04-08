@@ -1,4 +1,3 @@
-import java.awt.*;
 import java.io.*;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -6,132 +5,130 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Baza2024 {
-    private static Student[] student;
+public class Database2024 {
+    private static Student[] students;
     public static void main(String[] args) throws IOException {
-        student = new Student[4];
-        for (int i = 0; i < student.length; i++) {
-            student[i] = new Student();
+        students = new Student[4];
+        for (int i = 0; i < students.length; i++) {
+            students[i] = new Student();
         }
-        drukujMenu();
+        printMenu();
         centerCursorOn();
-        wybierzOpcje();
-
+        chooseOption();
     }
-    static void drukujMenu() {
+
+    static void printMenu() {
         System.out.println("           MENU");
         System.out.println("+=============================+");
-        System.out.println("1.Otworz baze danych");
-        System.out.println("2.Utworz nowa baze");
-        System.out.println("3.Sortowanie bazy");
-        System.out.println("4.Usun baze");
-        System.out.println("5.Zakoncz program");
+        System.out.println("1. Open database");
+        System.out.println("2. Create new database");
+        System.out.println("3. Sort database");
+        System.out.println("4. Delete database");
+        System.out.println("5. Exit program");
         System.out.println("+=============================+");
     }
 
-    static void wybierzOpcje() throws IOException {
+    static void chooseOption() throws IOException {
         Scanner sc = new Scanner(System.in);
-        boolean wybor = false;
+        boolean choice = false;
         int input;
-        int opcja = 0;
-        int wyborSort = 0;
+        int option = 0;
+        int sortChoice = 0;
         do {
-            System.out.println("Wybierz opcje:");
+            System.out.println("Choose an option:");
             input = sc.nextInt();
             if (input < 1 || input > 5) {
-                wybor = true;
-                System.out.println("Niepoprawna opcja");
+                choice = true;
+                System.out.println("Invalid option");
             } else {
-                wybor = false;
-                opcja = input;
+                choice = false;
+                option = input;
             }
-            if(opcja == 3){
-                System.out.println("Wybierz pole po ktorym chcesz posortowac:");
-                System.out.println("1. Imie");
-                System.out.println("2. Nazwisko");
-                System.out.println("3. Rok studiow");
-                wyborSort = sc.nextInt();
+            if(option == 3){
+                System.out.println("Choose field to sort by:");
+                System.out.println("1. First name");
+                System.out.println("2. Last name");
+                System.out.println("3. Year of study");
+                sortChoice = sc.nextInt();
             }
-        } while (wybor);
-        switch (opcja) {
+        } while (choice);
+        switch (option) {
             case 1:
-                System.out.println("Wybrano opcje 1");
-                otworzBaze(student);
+                System.out.println("Selected option 1");
+                openDatabase(students);
                 break;
             case 2:
-                System.out.println("Wybrano opcje 2");
-                utworzBaze();
+                System.out.println("Selected option 2");
+                createDatabase();
                 break;
             case 3:
-                System.out.println("Wybrano opcje 3");
-                sortujBaze(student,wyborSort);
+                System.out.println("Selected option 3");
+                sortDatabase(students,sortChoice);
                 break;
             case 4:
-                System.out.println("Wybrano opcje 4");
-                usunBaze();
-
+                System.out.println("Selected option 4");
+                deleteDatabase();
                 break;
             case 5:
-                System.out.println("Wybrano opcje 5");
-                //zapiszBaze(nazwaOtwartegoPliku);
+                System.out.println("Selected option 5");
                 System.exit(0);
         }
     }
-    static void otworzBaze(Student[] student) throws java.io.IOException {
+
+    static void openDatabase(Student[] students) throws java.io.IOException {
         Scanner sc = new Scanner(System.in);
-        String nazwaBazy;
+        String dbName;
         System.out.println("+=============================+");
-        System.out.println("              Przeglad");
+        System.out.println("             Browse");
         System.out.println("+=============================+");
-        System.out.println("Podaj nazwe bazy lub wroc do menu wpisujac litere G:");
-        nazwaBazy = sc.nextLine();
-        File file = new File(nazwaBazy);
+        System.out.println("Enter database name or go back to menu by entering letter G:");
+        dbName = sc.nextLine();
+        File file = new File(dbName);
 
         if (!file.exists()) {
-            System.out.println("Plik nie istnieje");
-            drukujMenu();
-            wybierzOpcje();
-
+            System.out.println("File does not exist");
+            printMenu();
+            chooseOption();
         }
-        if (nazwaBazy.equalsIgnoreCase("G")) {
-            drukujMenu();
-            wybierzOpcje();
+        if (dbName.equalsIgnoreCase("G")) {
+            printMenu();
+            chooseOption();
             return;
         }
-        System.out.println("Otwarto plik: "+nazwaBazy);
+        System.out.println("Opened file: "+dbName);
         try {
             String line;
-            FileReader fileReader = new FileReader(nazwaBazy);
-            BufferedReader buffedReader = new BufferedReader(fileReader);
-            while ((line = buffedReader.readLine()) != null) {
+            FileReader fileReader = new FileReader(dbName);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            while ((line = bufferedReader.readLine()) != null) {
                 System.out.println(line);
             }
-            buffedReader.close();
+            bufferedReader.close();
             fileReader.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
         System.out.println("+=============================+");
-        System.out.println("M - Modyfikacja   S-Sortowanie H-Powrot do menu");
+        System.out.println("M - Modify   S - Sort H - Back to menu");
         char choice = sc.next().charAt(0);
         switch(choice) {
             case 'M':
-                try (BufferedWriter buffwriter = new BufferedWriter(new FileWriter(nazwaBazy, false))) {
+                try (BufferedWriter buffwriter = new BufferedWriter(new FileWriter(dbName, false))) {
                     buffwriter.newLine();
-                    System.out.println("Podaj numer ktore pole chcesz zmienic: (0-3)");
+                    System.out.println("Enter the number of the field you want to modify: (1-3)");
                     int numR = sc.nextInt();
                     if (numR >= 1 && numR <= 3) {
                         Student modifiedStudent = new Student();
-                        modifiedStudent.wczytajDane();
-                        student[numR - 1] = modifiedStudent;
-                        for (Student s : student) {
-                            buffwriter.write("Imie: " + s.getImie() + "\n");
-                            buffwriter.write("Nazwisko: " + s.getNazwisko() + "\n");
-                            buffwriter.write("Rok studiow: " + s.getRokStudiow() + "\n");
+                        modifiedStudent.inputData();
+                        students[numR - 1] = modifiedStudent;
+                        for (Student s : students) {
+                            buffwriter.write("First Name: " + s.getFirstName() + "\n");
+                            buffwriter.write("Last Name: " + s.getLastName() + "\n");
+                            buffwriter.write("Year of Study: " + s.getYearOfStudy() + "\n");
                             buffwriter.newLine();
                         }
                     } else{
-                        System.out.println("Niepoprawny numer pola");
+                        System.out.println("Invalid field number");
                         break;
                     }
 
@@ -141,89 +138,87 @@ public class Baza2024 {
                 break;
 
             case 'S':
-                System.out.println("Sortowanie");
+                System.out.println("Sorting");
                 break;
             case 'H':
-                drukujMenu();
-                wybierzOpcje();
-
+                printMenu();
+                chooseOption();
         }
-        System.out.println("Dane zostaly zmodyfikowane");
-        System.out.println("Kliknij enter aby kontynuuowac");
+        System.out.println("Data modified");
+        System.out.println("Press enter to continue");
         System.in.read();
-        drukujMenu();
-        wybierzOpcje();
-
+        printMenu();
+        chooseOption();
     }
-    static void sortujBaze(Student[] student, int wyborSort) throws IOException {
+
+    static void sortDatabase(Student[] students, int sortChoice) throws IOException {
         Scanner sc = new Scanner(System.in);
-        String nazwaBazy;
-        System.out.println("Podaj nazwe bazy ktora chcesz posortowac");
-        nazwaBazy = sc.next();
+        String dbName;
+        System.out.println("Enter the name of the database you want to sort");
+        dbName = sc.next();
 
-        File file = new File(nazwaBazy);
+        File file = new File(dbName);
         if (!file.exists()) {
-            System.out.println("Plik nie istnieje");
-            drukujMenu();
-            wybierzOpcje();
-
+            System.out.println("File does not exist");
+            printMenu();
+            chooseOption();
         }
-        switch (wyborSort) {
+        switch (sortChoice) {
             case 1:
-                Arrays.sort(student, Comparator.comparing(Student::getImie));
+                Arrays.sort(students, Comparator.comparing(Student::getFirstName));
                 break;
             case 2:
-                Arrays.sort(student, Comparator.comparing(Student::getNazwisko));
+                Arrays.sort(students, Comparator.comparing(Student::getLastName));
                 break;
             case 3:
-                Arrays.sort(student, Comparator.comparingInt(Student::getRokStudiow));
+                Arrays.sort(students, Comparator.comparingInt(Student::getYearOfStudy));
                 break;
             default:
-                System.out.println("Niepoprawny wybor sortowania");
-
+                System.out.println("Invalid sort choice");
         }
-        for (Student s : student) {
-            System.out.println("Imie: " + s.getImie() + ", Nazwisko: " + s.getNazwisko() + ", Rok studiow: " + s.getRokStudiow());
+        for (Student s : students) {
+            System.out.println("First Name: " + s.getFirstName() + ", Last Name: " + s.getLastName() + ", Year of Study: " + s.getYearOfStudy());
         }
-        otworzBaze(student);
+        openDatabase(students);
     }
-    static void utworzBaze() throws java.io.IOException
+
+    static void createDatabase() throws java.io.IOException
     {
         Scanner sc = new Scanner(System.in);
-        String nazwaBazy = new String();
-        boolean poprawna = false;
+        String dbName = new String();
+        boolean valid = false;
         boolean w1=true;
         do{
-            System.out.println("Podaj nazwe bazy w formacie bazaXX.dat, gdzie cyfry XX z [0,9]:");
-            nazwaBazy=sc.next();
-            poprawna = false;
+            System.out.println("Enter database name in the format databaseXX.dat, where XX is in [0,9]:");
+            dbName=sc.next();
+            valid = false;
             w1  = true;
-            poprawna=sprawdzPoprawnoscNazwyBazy(nazwaBazy);
-            File file = new File(nazwaBazy);
-            w1=file.exists()||file.isDirectory()||!poprawna;
+            valid=checkDatabaseNameValidity(dbName);
+            File file = new File(dbName);
+            w1=file.exists()||file.isDirectory()||!valid;
             if(w1)
-                System.out.println("Nazwa bazy niepoprawna lub plik istnieje");
+                System.out.println("Invalid database name or file exists");
         }while(w1);
-        Student nowyStudent = new Student();
-        stworzPlik(nazwaBazy);
-        drukujMenu();
-        wybierzOpcje();
+        Student newStudent = new Student();
+        createFile(dbName);
+        printMenu();
+        chooseOption();
     }
 
-    static void stworzPlik(String nazwaBazy) throws java.io.IOException
+    static void createFile(String dbName) throws java.io.IOException
     {
         Scanner sc = new Scanner(System.in);
-        FileWriter writer = new FileWriter(nazwaBazy,true);
+        FileWriter writer = new FileWriter(dbName,true);
 
         try {
-            for(int i=0;i<student.length;i++) {
-                student[i] = new Student();
-                student[i].wczytajDane();
-                writer.write("Imie studenta: " + student[i].getImie());
+            for(int i=0;i<students.length;i++) {
+                students[i] = new Student();
+                students[i].inputData();
+                writer.write("First Name: " + students[i].getFirstName());
                 writer.write("\n");
-                writer.write("Nazwisko studenta: " + student[i].getNazwisko());
+                writer.write("Last Name: " + students[i].getLastName());
                 writer.write("\n");
-                writer.write("Rok studiow " + student[i].getRokStudiow());
+                writer.write("Year of Study " + students[i].getYearOfStudy());
                 writer.write("\n");
                 writer.write("\n");
 
@@ -234,39 +229,41 @@ public class Baza2024 {
         finally{
             if(writer != null) {
                 writer.close();
-                System.out.println("Dane zostaly zapisane do pliku.");
-
+                System.out.println("Data has been saved to file.");
             }
         }
     }
-    static void usunBaze() throws java.io.IOException
+
+    static void deleteDatabase() throws java.io.IOException
     {
-        String nazwaBazy;
+        String dbName;
         Scanner sc = new Scanner(System.in);
-        System.out.println("Ktora baze chcesz usunac?");
-        nazwaBazy = sc.next();
+        System.out.println("Which database do you want to delete?");
+        dbName = sc.next();
         try {
-            File fileDelete = new File(nazwaBazy);
+            File fileDelete = new File(dbName);
             if(fileDelete.delete()){
-                System.out.println("Plik zostal usuniety prawidlowo.");
+                System.out.println("File deleted successfully.");
             }else{
-                System.out.println("Nie udalo sie usunac pliku.");
+                System.out.println("Failed to delete file.");
             }
         }catch(Exception e){
             e.printStackTrace();
         }
         System.out.println("+=============================+");
-        System.out.println("Kliknij enter aby kontynuuowac");
+        System.out.println("Press enter to continue");
         System.in.read();
-        drukujMenu();
-        wybierzOpcje();
+        printMenu();
+        chooseOption();
     }
+
     static void centerCursor(Robot robot){
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int centerX = screenSize.width/2;
         int centerY = screenSize.height/2;
         robot.mouseMove(centerX,centerY);
     }
+
     static void centerCursorOn(){
         EventQueue.invokeLater(()->{
             try{
@@ -277,45 +274,47 @@ public class Baza2024 {
             }
         });
     }
-    private static boolean sprawdzPoprawnoscNazwyBazy(String nazwaBazy) {
-        Pattern wzorzec = Pattern.compile("^baza\\d{2}\\.dat$");
+    private static boolean checkDatabaseNameValidity(String dbName) {
+        Pattern pattern = Pattern.compile("^database\\d{2}\\.dat$");
 
-        Matcher matcher = wzorzec.matcher(nazwaBazy);
+        Matcher matcher = pattern.matcher(dbName);
         return matcher.matches();
     }
 }
 class Student{
-    private String nazwisko;
-    private String imie;
-    private int rokStudiow;
-    private int wyborSort;
+    private String lastName;
+    private String firstName;
+    private int yearOfStudy;
     Student(){};
-    Student(String nazwisko,String imie, int rokStudiow)
+    Student(String lastName, String firstName, int yearOfStudy)
     {
-        this.nazwisko = nazwisko;
-        this.imie = imie;
-        this.rokStudiow = rokStudiow;
+        this.lastName = lastName;
+        this.firstName = firstName;
+        this.yearOfStudy = yearOfStudy;
     }
-    void wczytajDane()
+    void inputData()
     {
         Scanner sc = new Scanner(System.in);
-        System.out.println("Podaj imie studenta:");
-        this.imie=sc.nextLine();
-        System.out.println("Podaj nazwisko");
-        this.nazwisko = sc.nextLine();
-        System.out.println("Podaj rok studiow:");
+        System.out.println("Enter student's first name:");
+        this.firstName=sc.nextLine();
+        System.out.println("Enter last name");
+        this.lastName = sc.nextLine();
+        System.out.println("Enter year of study:");
         while(!sc.hasNextInt()){
-            System.out.println("Blad, podaj ponownie rok studiow:");
+            System.out.println("Error, enter year of study again:");
             sc.next();
-        }this.rokStudiow = sc.nextInt();
+        }this.yearOfStudy = sc.nextInt();
     }
-    String getImie(){
-        return imie;
+
+    String getFirstName(){
+        return firstName;
     }
-    String getNazwisko(){
-        return nazwisko;
+
+    String getLastName(){
+        return lastName;
     }
-    int getRokStudiow(){
-        return rokStudiow;
+
+    int getYearOfStudy(){
+        return yearOfStudy;
     }
 }
